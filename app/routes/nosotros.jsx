@@ -1,5 +1,5 @@
 import imagen from "../../public/img/nosotros.jpg";
-import styles from '../styles/nosotros.css'
+import styles from "../styles/nosotros.css";
 export function meta() {
   return {
     title: "GuitarLa - Sobre Nosotros",
@@ -16,8 +16,8 @@ export function links() {
       rel: "preload",
       href: imagen,
       as: "image",
-    }
-  ]
+    },
+  ];
 }
 function Nosotros() {
   return (

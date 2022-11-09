@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   Meta,
   Links,
@@ -46,9 +47,54 @@ export function links() {
 }
 
 export default function App() {
+  const carritoLS = typeof window !== "undefined" ? JSON.parse(localStorage.getItem("carrito")) ?? [] : null;
+  const [carrito, setCarrito] = useState(carritoLS);
+  useEffect(() => {
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+  }, [carrito]);
+  const agregarCarrito = (guitarra) => {
+    if (carrito.some((guitarraState) => guitarraState.id === guitarra.id)) {
+      //iterar sobre el arreglo e identificar el elemento duplicado
+      const carritoActualizado = carrito.map((guitarraState) => {
+        if (guitarraState.id === guitarra.id) {
+          //reescribir la cantidad
+          guitarraState.cantidad = guitarra.cantidad;
+        }
+        return guitarraState;
+      });
+      //Añadir al Carrito
+      setCarrito(carritoActualizado);
+      // setCarrito(carrito.map(guitarraState => guitarraState.id === guitarra.id ? guitarra : guitarraState));
+    } else {
+      //registro nuevo en el carrito
+      setCarrito([...carrito, guitarra]);
+    }
+  };
+  const actualizarCantidad = (guitarra) => {
+    const carritoActualizado = carrito.map((guitarraState) => {
+      if (guitarraState.id === guitarra.id) {
+        guitarraState.cantidad = guitarra.cantidad;
+      }
+      return guitarraState;
+    });
+    setCarrito(carritoActualizado);
+  };
+  const eliminarGuitarra = (id) => {
+    const carritoActualizado = carrito.filter(
+      (guitarraState) => guitarraState.id !== id
+    );
+    setCarrito(carritoActualizado);
+  };
   return (
     <Document>
-      <Outlet />
+      <Outlet
+        context={{
+          agregarCarrito,
+          carrito,
+          actualizarCantidad,
+          eliminarGuitarra,
+        }}
+      />
     </Document>
   );
 }
@@ -80,7 +126,9 @@ export function CatchBoundary() {
       <p className="error">
         {error.status} {error.statusText}
       </p>
-      <Link to="/" className="error-enlace">Tal vez quieras volver a la pagina principal</Link>
+      <Link to="/" className="error-enlace">
+        Tal vez quieras volver a la pagina principal
+      </Link>
     </Document>
   );
 }
@@ -90,7 +138,9 @@ export function ErrorBoundary({ error }) {
       <p className="error">
         {error.status} {error.statusText}
       </p>
-      <Link to="/" className="error-enlace">Tal vez quieras volver a la pagina principal</Link>
+      <Link to="/" className="error-enlace">
+        Tal vez quieras volver a la pagina principal
+      </Link>
     </Document>
   );
 }
